@@ -1,7 +1,6 @@
 const {JSDOM} = require('jsdom')
 // pages is an object
 async function crawlPage(baseUrl, currentUrl, pages){
-
     const baseURLObj = new URL(baseUrl)
     const currentURLObj = new URL(currentUrl)
     if(baseURLObj.hostname !== currentURLObj.hostname){
@@ -12,9 +11,7 @@ async function crawlPage(baseUrl, currentUrl, pages){
         pages[normalizedCurrentUrl]++
         return pages
     }
-
     pages[normalizedCurrentUrl] = 1
-
     console.log(`Fetching data from ${currentUrl}`)
     try {
         const response = await fetch(currentUrl)
