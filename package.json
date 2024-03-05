@@ -6,11 +6,13 @@
   "scripts": {
     "start": "main.js",
     "test": "jest"
-
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "jest": "^29.7.0"
+  },
+  "dependencies": {
+    "jsdom": "^24.0.0"
   }
 }
