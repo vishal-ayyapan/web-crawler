@@ -1,22 +1,40 @@
 const {JSDOM} = require('jsdom')
+// pages is an object
+async function crawlPage(baseUrl, currentUrl, pages){
 
-async function crawlPage(crawlUrl){
-    console.log(`Fetching data from ${crawlUrl}`)
+    const baseURLObj = new URL(baseUrl)
+    const currentURLObj = new URL(currentUrl)
+    if(baseURLObj.hostname !== currentURLObj.hostname){
+        return pages
+    }
+    const normalizedCurrentUrl = normalizeURL(currentUrl)
+    if (pages[normalizedCurrentUrl] > 0){
+        pages[normalizedCurrentUrl]++
+        return pages
+    }
+
+    pages[normalizedCurrentUrl] = 1
+
+    console.log(`Fetching data from ${currentUrl}`)
     try {
-        const response = await fetch(crawlUrl)
+        const response = await fetch(currentUrl)
         if(response.status > 399){
             console.log(`Failed to fetch, status code : ${response.status}`)
-            return
+            return pages
         }
         const contentType = response.headers.get('content-type')
         if(!contentType.includes('text/html')){
             console.log(`Failed to fetch, content-type : ${contentType}`)
-            return
+            return pages
         }
-        const responseData = await response.text()
-        console.log(responseData)
+        const htmlBody = await response.text()
+        const nextURLs = HTMLbody(htmlBody,baseUrl)
+        for (const nextUrl of nextURLs){
+            pages = await crawlPage(baseUrl, nextUrl, pages)
+        }
+        return pages
     } catch (error) {
-        console.log(`Failed to fetch: ${error.message} , on page ${crawlUrl}`)
+        console.log(`Failed to fetch: ${error.message} , on page ${currentUrl}`)
     }
 }
 
@@ -27,7 +45,7 @@ function HTMLbody(htmlBody, baseUrl){
     for (let linkElement of linkElements){
         if (linkElement.href.slice(0,1) === '/'){
             try {
-                let urlObj = new URL(`${baseUrl}${linkElement.href}`)
+                const urlObj = new URL(`${baseUrl}${linkElement.href}`)
                 urls.push(urlObj.href)
             } catch (error) {
                 console.log(`Error with relative url ${error.message}`)
@@ -35,7 +53,7 @@ function HTMLbody(htmlBody, baseUrl){
         }
         else{
             try {
-                let urlObj = new URL(linkElement.href)
+                const urlObj = new URL(linkElement.href)
                 urls.push(urlObj.href)
             } catch (error) {
                 console.log(`Error with relative url ${error.message}`)

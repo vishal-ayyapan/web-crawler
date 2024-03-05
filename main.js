@@ -1,6 +1,6 @@
 const {crawlPage} = require('./crawl.js')
 
-function main(){
+async function main(){
     if (process.argv.length < 3){
         console.log('No websites to crawl')
         process.exit(1)
@@ -9,8 +9,12 @@ function main(){
         console.log('Multiple websites to crawl')
         process.exit(1)
     }
-    const crawlUrl = process.argv[2]
-    crawlPage(crawlUrl)
+    const baseUrl = process.argv[2]
+    const crawlPages = await crawlPage(baseUrl,baseUrl,{})
+
+    for(const crawlPage of Object.entries(crawlPages)){
+        console.log(crawlPage)
+    }
 }
 
 main()
