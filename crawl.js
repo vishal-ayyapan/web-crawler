@@ -53,7 +53,7 @@ function HTMLbody(htmlBody, baseUrl){
                 const urlObj = new URL(linkElement.href)
                 urls.push(urlObj.href)
             } catch (error) {
-                console.log(`Error with relative url ${error.message}`)
+                console.log(`Error with absolute url ${error.message}`)
             }
         }
     }
